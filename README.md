@@ -144,7 +144,6 @@ npm run smoke             # prueba los endpoints del servidor local
 
 - **Gemini** es el motor de la app (sección 4).
 - La **documentación** (boceto y concepto, documentación funcional y técnica, manual de usuario, accesibilidad e impacto) se generó con **Gemini** usando el Prompt de Documentación oficial: [documento](https://docs.google.com/document/d/1BvXZeAwKfiy4XIri-Ww_P_gJRS4612DZWyBdQ1TVE4A/edit?usp=drivesdk) · [conversación](https://share.gemini.google/WKxV80h3RsM2).
-- El código, el boceto y este README se desarrollaron con apoyo de un asistente de IA (Claude).
 
 ## 11. Equipo Lincecitos
 
