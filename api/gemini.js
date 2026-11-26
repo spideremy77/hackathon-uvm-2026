@@ -5,9 +5,19 @@ import { generate } from "../lib/gemini.js";
 import { demoResponse } from "../lib/demo.js";
 
 export default async function handler(req, res) {
+  try {
+    return await main(req, res);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ ok: false, error: "Error interno del servidor.", detail: String(err?.message || err).slice(0, 300) });
+  }
+}
+
+async function main(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Usa POST" });
 
-  const { task: taskId, prompt = "", images = [], history = [], easyRead = false } = req.body || {};
+  const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+  const { task: taskId, prompt = "", images = [], history = [], easyRead = false } = body;
   const task = APP.tasks.find((t) => t.id === taskId) || APP.tasks[0];
 
   if (!prompt.trim() && images.length === 0) {
