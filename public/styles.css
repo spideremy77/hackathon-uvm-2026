@@ -198,3 +198,4 @@ html.contrast .semaforo .luz { color: #000; }
 .lista .dot { margin-top: .3rem; }
 .lista small { color: var(--muted); display: block; }
 .leaflet-popup-content { font-family: inherit; }
+@media (max-width: 600px) { .top { position: static; } }
