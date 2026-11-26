@@ -1,0 +1,11 @@
+{
+  "name": "Ilumina",
+  "short_name": "Ilumina",
+  "description": "Asistente incluyente con IA (Gemini).",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f5f3",
+  "theme_color": "#B4121B",
+  "lang": "es-MX",
+  "icons": [{ "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
