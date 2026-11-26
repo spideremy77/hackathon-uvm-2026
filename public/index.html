@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Ilumina</title>
-  <meta name="description" content="Asistente incluyente con IA (Gemini)." />
+  <title>Rampa · tu ciudad sin barreras</title>
+  <meta name="description" content="Evalúa, reporta y encuentra lugares accesibles en tu ciudad con IA (Gemini)." />
   <meta name="theme-color" content="#B4121B" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/icons/icon.svg" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
@@ -18,8 +19,8 @@
     <div class="brand">
       <img src="/icons/icon.svg" alt="" width="36" height="36" />
       <div>
-        <h1 id="app-name">Ilumina</h1>
-        <p id="app-tagline" class="tagline"></p>
+        <h1 id="app-name">Rampa</h1>
+        <p id="app-tagline" class="tagline">Tu ciudad sin barreras</p>
       </div>
     </div>
     <nav class="a11y" aria-label="Accesibilidad">
@@ -27,59 +28,125 @@
       <button type="button" id="font-up" aria-label="Letra más grande">A+</button>
       <button type="button" id="contrast" aria-pressed="false" aria-label="Alto contraste">🌓</button>
       <button type="button" id="easy" aria-pressed="false" title="Lectura fácil">Fácil</button>
-      <button type="button" id="autoread" aria-pressed="false" title="Leer respuestas en voz alta">🔊</button>
+      <button type="button" id="autoread" aria-pressed="false" aria-label="Leer respuestas en voz alta automáticamente">🔊</button>
     </nav>
   </header>
 
   <div id="demo-banner" class="banner" hidden role="status">
-    Modo demo: falta configurar la API key de Gemini. La interfaz funciona, pero las respuestas son de ejemplo.
+    Modo demo: falta configurar la API key de Gemini. Las respuestas son de ejemplo.
   </div>
 
+  <section class="perfil-bar" aria-labelledby="perfil-h">
+    <h2 id="perfil-h" class="perfil-title">Me muevo con:</h2>
+    <div id="perfiles" class="perfiles" role="radiogroup" aria-labelledby="perfil-h"></div>
+  </section>
+
   <main id="main">
-    <section aria-labelledby="tasks-h">
-      <h2 id="tasks-h" class="sr-only">¿Qué quieres hacer?</h2>
-      <div id="tasks" class="tasks" role="radiogroup" aria-label="Funciones"></div>
+    <!-- ============ EVALUAR ============ -->
+    <section id="view-evaluar" class="view" aria-labelledby="ev-h">
+      <form id="form-evaluar" class="card" autocomplete="off">
+        <h2 id="ev-h">📷 Evaluar un lugar</h2>
+        <p class="hint">Toma una foto de una calle, entrada, estación o baño y te digo si es accesible para ti.</p>
+        <div class="photo-zone" data-for="evaluar">
+          <input type="file" accept="image/*" capture="environment" hidden />
+          <button type="button" class="photo-btn">📷 Tomar o elegir foto</button>
+          <div class="preview" hidden><img alt="Foto seleccionada" /><button type="button" class="link remove">Quitar foto</button></div>
+        </div>
+        <label for="ev-text">Algo más que quieras decir (opcional)</label>
+        <div class="input-row">
+          <textarea id="ev-text" rows="2" placeholder="Ej. ¿Puedo entrar con mi silla? ¿Es seguro el cruce?"></textarea>
+          <button type="button" class="mic secondary" data-target="ev-text" aria-label="Dictar">🎤</button>
+        </div>
+        <button type="submit" class="primary">Evaluar con Gemini</button>
+      </form>
+      <section id="out-evaluar" class="result" aria-live="polite" tabindex="-1"></section>
     </section>
 
-    <form id="ask" class="card" autocomplete="off">
-      <label for="prompt" id="task-desc" class="task-desc"></label>
-      <div class="input-row">
-        <textarea id="prompt" rows="3"></textarea>
-      </div>
-
-      <div id="image-zone" class="image-zone">
-        <input type="file" id="file" accept="image/*" capture="environment" hidden />
-        <button type="button" id="camera" class="secondary">📷 Foto o imagen</button>
-        <div id="preview" class="preview" hidden>
-          <img id="preview-img" alt="Imagen seleccionada" />
-          <button type="button" id="remove-img" class="link">Quitar imagen</button>
+    <!-- ============ REPORTAR ============ -->
+    <section id="view-reportar" class="view" hidden aria-labelledby="rep-h">
+      <form id="form-reportar" class="card" autocomplete="off">
+        <h2 id="rep-h">📢 Reportar una barrera</h2>
+        <p class="hint">Cuéntame qué pasa con una foto o con tu voz. Yo redacto el reporte y te digo a quién enviarlo.</p>
+        <div class="photo-zone" data-for="reportar">
+          <input type="file" accept="image/*" capture="environment" hidden />
+          <button type="button" class="photo-btn">📷 Tomar o elegir foto</button>
+          <div class="preview" hidden><img alt="Foto seleccionada" /><button type="button" class="link remove">Quitar foto</button></div>
         </div>
-      </div>
+        <label for="rep-text">¿Qué pasa?</label>
+        <div class="input-row">
+          <textarea id="rep-text" rows="3" placeholder="Ej. Un coche está estacionado en la rampa de la esquina y no puedo bajar."></textarea>
+          <button type="button" class="mic secondary" data-target="rep-text" aria-label="Dictar">🎤</button>
+        </div>
+        <label for="rep-lugar">¿Dónde? (calle, esquina o estación)</label>
+        <div class="input-row">
+          <input id="rep-lugar" type="text" placeholder="Ej. Insurgentes y Puebla, colonia Roma" />
+          <button type="button" id="geo-btn" class="secondary" aria-label="Usar mi ubicación">📍</button>
+        </div>
+        <p id="geo-status" class="small muted" aria-live="polite"></p>
+        <button type="submit" class="primary">Crear reporte con Gemini</button>
+      </form>
+      <section id="out-reportar" class="result" aria-live="polite" tabindex="-1"></section>
+    </section>
 
-      <div class="actions">
-        <button type="button" id="mic" class="secondary" aria-pressed="false">🎤 Dictar</button>
-        <button type="submit" id="send" class="primary">Preguntar a Gemini</button>
+    <!-- ============ MAPA ============ -->
+    <section id="view-mapa" class="view" hidden aria-labelledby="map-h">
+      <div class="card">
+        <h2 id="map-h">🗺️ Mapa de accesibilidad</h2>
+        <p class="hint">Los colores cambian según tu perfil. Verde: accesible · Amarillo: con precaución · Rojo: no accesible.</p>
+        <div id="map" class="map" role="region" aria-label="Mapa de puntos evaluados y reportados"></div>
+        <p id="map-msg" class="small muted"></p>
+        <div class="legend" aria-hidden="true"><span class="dot verde"></span>Accesible <span class="dot amarillo"></span>Precaución <span class="dot rojo"></span>No accesible</div>
       </div>
-      <div id="examples" class="examples" aria-label="Ejemplos"></div>
-    </form>
-
-    <section id="result" class="result" aria-live="polite" aria-busy="false" tabindex="-1"></section>
-
-    <form id="followup" class="card followup" hidden autocomplete="off">
-      <label for="follow-prompt">¿Tienes otra duda sobre esto?</label>
-      <div class="input-row">
-        <input id="follow-prompt" type="text" placeholder="Escribe tu siguiente pregunta" />
-        <button type="submit" class="primary">Enviar</button>
+      <form id="form-recomendar" class="card" autocomplete="off">
+        <label for="rec-text"><strong>Pregúntale a Gemini</strong>: ¿qué quieres hacer?</label>
+        <div class="input-row">
+          <input id="rec-text" type="text" placeholder="Ej. Quiero llegar al metro sin escalones" />
+          <button type="button" class="mic secondary" data-target="rec-text" aria-label="Dictar">🎤</button>
+        </div>
+        <button type="submit" class="primary">Recomiéndame lugares</button>
+      </form>
+      <section id="out-recomendar" class="result" aria-live="polite" tabindex="-1"></section>
+      <div class="card">
+        <h3>Puntos en el mapa</h3>
+        <ul id="lista-puntos" class="lista"></ul>
       </div>
-    </form>
+    </section>
+
+    <!-- ============ ACLARAR ============ -->
+    <section id="view-aclarar" class="view" hidden aria-labelledby="acl-h">
+      <form id="form-aclarar" class="card" autocomplete="off">
+        <h2 id="acl-h">📄 Aviso en lenguaje claro</h2>
+        <p class="hint">Fotografía o pega un aviso, cartel o comunicado oficial y te lo explico fácil.</p>
+        <div class="photo-zone" data-for="aclarar">
+          <input type="file" accept="image/*" capture="environment" hidden />
+          <button type="button" class="photo-btn">📷 Foto del aviso</button>
+          <div class="preview" hidden><img alt="Foto seleccionada" /><button type="button" class="link remove">Quitar foto</button></div>
+        </div>
+        <label for="acl-text">O pega el texto</label>
+        <div class="input-row">
+          <textarea id="acl-text" rows="3" placeholder="Ej. Por trabajos de mantenimiento, la estación permanecerá cerrada…"></textarea>
+          <button type="button" class="mic secondary" data-target="acl-text" aria-label="Dictar">🎤</button>
+        </div>
+        <button type="submit" class="primary">Explícamelo con Gemini</button>
+      </form>
+      <section id="out-aclarar" class="result" aria-live="polite" tabindex="-1"></section>
+    </section>
+
+    <footer class="foot">
+      <p id="ods" class="ods"></p>
+      <p id="disclaimer" class="small"></p>
+      <p class="small">Impulsado por <strong>Gemini</strong> · <span id="team"></span></p>
+    </footer>
   </main>
 
-  <footer class="foot">
-    <p id="ods" class="ods"></p>
-    <p id="disclaimer" class="small"></p>
-    <p class="small">Impulsado por <strong>Gemini</strong> · <span id="team"></span></p>
-  </footer>
+  <nav class="tabs" aria-label="Secciones">
+    <button type="button" data-view="evaluar" aria-current="page"><span aria-hidden="true">📷</span>Evaluar</button>
+    <button type="button" data-view="reportar"><span aria-hidden="true">📢</span>Reportar</button>
+    <button type="button" data-view="mapa"><span aria-hidden="true">🗺️</span>Mapa</button>
+    <button type="button" data-view="aclarar"><span aria-hidden="true">📄</span>Avisos</button>
+  </nav>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script type="module" src="/app.js"></script>
 </body>
 </html>

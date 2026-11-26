@@ -1,7 +1,7 @@
 {
-  "name": "Ilumina",
-  "short_name": "Ilumina",
-  "description": "Asistente incluyente con IA (Gemini).",
+  "name": "Rampa · tu ciudad sin barreras",
+  "short_name": "Rampa",
+  "description": "Evalúa, reporta y encuentra lugares accesibles con IA (Gemini).",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f6f5f3",
