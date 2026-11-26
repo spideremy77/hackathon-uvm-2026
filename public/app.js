@@ -117,7 +117,8 @@ async function callGemini(task, { prompt = "", image = null, extra = {} } = {}, 
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.ok) {
       console.error("Error de /api/gemini", res.status, data);
-      throw new Error(data.error || `Algo salió mal (error ${res.status}). Intenta de nuevo.`);
+      const det = data.detail ? ` [${res.status}: ${String(data.detail).slice(0, 160)}]` : ` [${res.status}]`;
+      throw new Error((data.error || "Algo salió mal. Intenta de nuevo.") + det);
     }
     $("#demo-banner").hidden = !data.demo;
     outEl.innerHTML = "";
