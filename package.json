@@ -1,13 +1,16 @@
 {
-  "name": "hackathon-uvm-2026",
+  "name": "rampa",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "App incluyente con Gemini · Hackathon Nacional de Innovación con IA · UVM 2026",
+  "description": "Rampa · tu ciudad sin barreras — app de accesibilidad urbana con Gemini (Hackathon Nacional de Innovación con IA · UVM 2026)",
   "scripts": {
     "dev": "node scripts/dev.js",
-    "test": "node scripts/smoke-test.js"
+    "test": "node --test tests/api.test.js",
+    "smoke": "node scripts/smoke-test.js"
   },
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "license": "MIT"
 }
