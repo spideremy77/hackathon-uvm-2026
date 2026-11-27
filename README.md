@@ -2,7 +2,8 @@
 
 > **App demostrable:** **https://hackathon-uvm-2026-ym9g.vercel.app** (se abre desde el navegador del celular, no requiere instalar nada)
 >
-> **Video del pitch (5 min):** _se agrega en la Fase 4_
+> **Video del pitch:** [Rampa · Video del pitch](https://drive.google.com/file/d/1abnhNa92U9BlMZrKohJsvRNlobkD6xZH/view?usp=drivesdk)
+> **Manual y documentación final (Fase 4):** [Lincecitos · Manual final con IA](https://docs.google.com/document/d/1fDA8npf7qgr6OlRZEzHUMw5220SgyhVJBDWXRY-58vA/edit?usp=drivesdk)
 > **Boceto:** [Rampa · Boceto (Fase 2)](https://docs.google.com/document/d/1g7Ux64lyFIsfdHsQ64-1B5eRziDOzUZ0gi__UpcVCKY/edit?usp=drivesdk)
 > **Documentación generada con Gemini:** [Lincecitos · Documentación con IA](https://docs.google.com/document/d/1BvXZeAwKfiy4XIri-Ww_P_gJRS4612DZWyBdQ1TVE4A/edit?usp=drivesdk) · [conversación con Gemini](https://share.gemini.google/WKxV80h3RsM2)
 
